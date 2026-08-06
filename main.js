@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import './style.css';
 
 // Defines the scene and camera. Camera Parameters include FOV, aspect ratio
 const scene = new THREE.Scene();
@@ -22,6 +23,22 @@ const torus = new THREE.Mesh(torus_geo, torus_tex);
 scene.add(torus);
 
 camera.position.z = 5;
+
+function add_star()
+{
+    const star_geo = new THREE.SphereGeometry(1, 1, 1);
+    const star_tex = new THREE.MeshBasicMaterial({color:0xffffff})
+    const star = new THREE.Mesh(star_geo, star_tex)
+
+    const [x, y, z] = Array(3)
+    .fill()
+    .map(() => THREE.MathUtils.randFloatSpread(200));
+
+    star.position.set(x, y, z);
+    scene.add(star);
+}
+
+Array(200).fill().forEach(add_star);
 
 function animate()
 {
