@@ -6,9 +6,12 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 // Defines the renderer in which the objects will get rendered
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild(renderer.domElement);
+const renderer = new THREE.WebGLRenderer({
+    canvas: document.querySelector('#bg')
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setAnimationLoop(animate);
+renderer.render(scene, camera);
 
 // Creates what the cube should look like
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -22,7 +25,7 @@ const torus_tex = new THREE.MeshBasicMaterial({color : 0xe8f5ff});
 const torus = new THREE.Mesh(torus_geo, torus_tex);
 scene.add(torus);
 
-camera.position.z = 5;
+camera.position.setZ(0);
 
 function add_star()
 {
@@ -40,20 +43,30 @@ function add_star()
 
 Array(200).fill().forEach(add_star);
 
-function animate()
+function moveCamera()
 {
-    // Update objects
+    const t = document.body.getBoundingClientRect().top;
+
     cube.rotation.y += 0.01
     cube.rotation.z += 0.01
 
+    camera.position.z = t * -0.01;
+    camera.position.x = t * -0.0001;
+    camera.rotation.y = t * -0.0001;
+
+}
+
+document.body.onscroll = moveCamera;
+moveCamera();
+
+function animate()
+{
+    // Update objects
     torus.rotation.y += 0.01
     torus.rotation.x += 0.01
 
     // Render
     renderer.render(scene, camera)
-
-    // Call animate again on the next frame
-    window.requestAnimationFrame(animate)
 }
 
 animate()
